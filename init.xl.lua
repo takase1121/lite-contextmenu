@@ -14,6 +14,8 @@ local DIVIDER = {}
 
 local ContextMenu = Object:extend()
 
+ContextMenu.DIVIDER = DIVIDER
+
 function ContextMenu:new()
   self.itemset = {}
   self.show_context_menu = false
@@ -114,10 +116,11 @@ function ContextMenu:on_mouse_moved(px, py)
     if px > x and px <= x + w and py > y and py <= y + h then
       system.set_cursor("arrow")
       self.selected = i
-      return
+      return true
     end
   end
   self.selected = -1
+  return true
 end
 
 function ContextMenu:on_selected(item)
@@ -215,11 +218,11 @@ local root_view_update = RootView.update
 local root_view_draw = RootView.draw
 
 function RootView:on_mouse_moved(...)
+  if menu:on_mouse_moved(...) then return end
   root_view_on_mouse_moved(self, ...)
-  menu:on_mouse_moved(...)
 end
 
--- this function is mostly copied from lite-xl's source
+-- copied from core.rootview
 function RootView:on_mouse_pressed(button, x,y, clicks)
   local div = self.root_node:get_divider_overlapping_point(x, y)
   if div then
@@ -276,3 +279,5 @@ menu:register("core.docview", {
   DIVIDER,
   { text = "Command Palette...", command = "core:find-command" }
 })
+
+return menu
