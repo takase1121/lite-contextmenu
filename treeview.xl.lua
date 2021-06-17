@@ -361,8 +361,12 @@ local has_fsutils, fsutils = core.try(require, "plugins.fsutils")
 if has_menu and has_fsutils then
   local function new_file()
     local path = view.hovered_item.abs_filename
-    command.perform "core:open-file"
-    core.command_view:set_text(path .. '/untitled')
+    core.command_view:enter("New filename", function(name)
+      local doc = core.open_doc()
+      core.root_view:open_doc(doc)
+      doc:save(name)
+    end)
+    core.command_view:set_text(path .. PATHSEP .. 'untitled')
   end
   
   local function new_dir()
@@ -370,7 +374,7 @@ if has_menu and has_fsutils then
     core.command_view:enter("New directory name", function(dir)
       fsutils.mkdir(dir)
     end)
-    core.command_view:set_text(path .. "/New folder")
+    core.command_view:set_text(path .. PATHSEP .. "New folder")
   end
   
   local function dirname(path)

@@ -202,44 +202,41 @@ local has_fsutils, fsutils = core.try(require, "plugins.fsutils")
 
 if has_menu and has_fsutils then
   local function new_file_f(path)
-    -- lite does not allow opening inexistent files
-    error("This is not supported in lite")
-    command.perform "core:open-doc"
-    core.command_view:set_text(path .. '/untitled')
+    command.perform "core:new-doc"
   end
-  
+
   local function new_file()
     new_file_f(view.hovered_item.abs_filename)
   end
-  
+
   local function new_dir_f(path)
     core.command_view:enter("New directory name", function(dir)
       fsutils.mkdir(dir)
     end)
-    core.command_view:set_text(path .. "/New folder")
+    core.command_view:set_text(path .. PATHSEP .. "New folder")
   end
-  
+
   local function new_dir()
     new_dir_f(view.hovered_item.abs_filename)
   end
-  
+
   local function delete_f(path)
     core.add_thread(function()
       local function wrap()
         return coroutine.wrap(function() fsutils.delete(path, true) end)
       end
-      
+
       for n in wrap() do
         if n % 100 == 0 then
           core.log("Deleted %d items.", n)
           coroutine.yield(0)
         end
       end
-      
+
       core.log("%q deleted.", path)
     end)
   end
-  
+
   local function delete()
     local path = view.hovered_item.abs_filename
     if view.hovered_item.type == "dir"
@@ -249,13 +246,13 @@ if has_menu and has_fsutils then
       delete_f(path)
     end
   end
-  
+
   local function dirname(path)
     local p = fsutils.split(path)
     table.remove(p)
     return table.concat(p, PATHSEP)
   end
-  
+
   local function rename()
     local oldname = view.hovered_item.abs_filename
     core.command_view:enter("Rename to", function(newname)
@@ -264,11 +261,11 @@ if has_menu and has_fsutils then
     end, common.path_suggest)
     core.command_view:set_text(dirname(oldname))
   end
-  
+
   local function copy_path()
     system.set_clipboard(view.hovered_item.abs_filename)
   end
-  
+
   menu:register(function() return view.hovered_item and view.hovered_item.type == "dir" end, {
     { text = "New file", command = new_file },
     { text = "New folder", command = new_dir },
