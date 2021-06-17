@@ -230,7 +230,7 @@ function RootView:on_mouse_pressed(button, x,y, clicks)
     return
   end
   local node = self.root_node:get_child_overlapping_point(x, y)
-  if node.hovered_scroll_button then
+  if node.hovered_scroll_button > 0 then
     node:scroll_tabs(node.hovered_scroll_button)
     return
   end

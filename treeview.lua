@@ -205,7 +205,7 @@ if has_menu and has_fsutils then
     -- lite does not allow opening inexistent files
     error("This is not supported in lite")
     command.perform "core:open-doc"
-    core.command_view:set_text(path .. '/untitled')
+    core.command_view:set_text(path .. PATHSEP .. 'untitled')
   end
   
   local function new_file()
@@ -216,7 +216,7 @@ if has_menu and has_fsutils then
     core.command_view:enter("New directory name", function(dir)
       fsutils.mkdir(dir)
     end)
-    core.command_view:set_text(path .. "/New folder")
+    core.command_view:set_text(path .. PATHSEP .. "New folder")
   end
   
   local function new_dir()
