@@ -203,7 +203,6 @@ local has_fsutils, fsutils = core.try(require, "plugins.fsutils")
 if has_menu and has_fsutils then
   local function new_file_f(path)
     command.perform "core:new-doc"
-    --core.command_view:set_text(path .. PATHSEP .. 'untitled')
   end
 
   local function new_file()
